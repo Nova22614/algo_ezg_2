@@ -11,7 +11,7 @@ Ray::Ray(glm::vec3 origin, glm::vec3 direction)
 	this->direction[2] = direction.z;
 }
 
-bool Ray::testForHit(glm::vec3 minimalBB, glm::vec3 maximalBB)
+bool Ray::tfhBoundingBox(glm::vec3 minimalBB, glm::vec3 maximalBB)
 {
 	float minimalBB[DIMENSIONS] = { minimalBB.x, minimalBB.y, minimalBB.z };
 	float maximalBB[DIMENSIONS] = { maximalBB.x, maximalBB.y, maximalBB.z };

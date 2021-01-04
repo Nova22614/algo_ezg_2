@@ -20,7 +20,7 @@ public:
 	Ray() = default;
 	Ray(glm::vec3 origin, glm::vec3 direction);
 	~Ray() = default;
-	bool testForHit(glm::vec3 minimalBB, glm::vec3 maximalBB);
+	bool tfhBoundingBox(glm::vec3 minimalBB, glm::vec3 maximalBB);
 
 private:
 	//Ray
