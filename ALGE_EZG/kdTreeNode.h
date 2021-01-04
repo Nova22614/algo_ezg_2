@@ -2,6 +2,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <algorithm>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include "Triangle.h"
 
@@ -20,6 +22,8 @@ class kdTreeNode
 
 		kdTreeNode(std::vector<Triangle*> Triangles);
 		~kdTreeNode();
+
+		void drawRecursively(void);
 
 		enum Axis
 		{

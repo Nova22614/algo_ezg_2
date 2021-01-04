@@ -40,6 +40,70 @@ kdTreeNode::~kdTreeNode()
     delete LeafObject;
 }
 
+void kdTreeNode::drawRecursively(void)
+{
+    // Make line
+    float line[] = {
+        AABBmax.x, AABBmax.y, AABBmax.z,
+        AABBmin.x, AABBmax.y, AABBmax.z,
+
+        AABBmin.x, AABBmax.y, AABBmax.z,
+        AABBmin.x, AABBmax.y, AABBmin.z,
+
+        AABBmin.x, AABBmax.y, AABBmin.z,
+        AABBmax.x, AABBmax.y, AABBmin.z,
+
+        AABBmax.x, AABBmax.y, AABBmin.z,
+        AABBmax.x, AABBmax.y, AABBmax.z,
+
+
+        AABBmax.x, AABBmax.y, AABBmax.z,
+        AABBmax.x, AABBmin.y, AABBmax.z,
+
+        AABBmin.x, AABBmax.y, AABBmax.z,
+        AABBmin.x, AABBmin.y, AABBmax.z,
+
+        AABBmin.x, AABBmax.y, AABBmin.z,
+        AABBmin.x, AABBmin.y, AABBmin.z,
+
+        AABBmax.x, AABBmax.y, AABBmin.z,
+        AABBmax.x, AABBmin.y, AABBmin.z,
+
+
+        AABBmax.x, AABBmin.y, AABBmax.z,
+        AABBmin.x, AABBmin.y, AABBmax.z,
+
+        AABBmin.x, AABBmin.y, AABBmax.z,
+        AABBmin.x, AABBmin.y, AABBmin.z,
+
+        AABBmin.x, AABBmin.y, AABBmin.z,
+        AABBmax.x, AABBmin.y, AABBmin.z,
+
+        AABBmax.x, AABBmin.y, AABBmin.z,
+        AABBmax.x, AABBmin.y, AABBmax.z
+    };
+
+    unsigned int buffer; // The ID, kind of a pointer for VRAM
+    glGenBuffers(1, &buffer); // Allocate memory for the triangle
+    glBindBuffer(GL_ARRAY_BUFFER, buffer); // Set the buffer as the active array
+    glBufferData(GL_ARRAY_BUFFER, 72 * sizeof(float), line, GL_STATIC_DRAW); // Fill the buffer with data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0); // Specify how the buffer is converted to vertices
+    glEnableVertexAttribArray(0); // Enable the vertex array
+
+    // Draw the lines
+    glDrawArrays(GL_LINES, 0, 2);
+
+    //draw child nodes
+    if (left != nullptr)
+    {
+       left->drawRecursively();
+    }
+    if (right != nullptr)
+    {
+       right->drawRecursively();
+    }
+}
+
 void kdTreeNode::MergeAABB(void)
 {
 	AABBmax.x = std::fmaxf(left->AABBmax.x, right->AABBmax.x);
