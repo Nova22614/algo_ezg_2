@@ -34,6 +34,18 @@ float yaw;
 float pitch;
 
 
+std::vector<Triangle*> GetTriangleFromVertexList(float* vertices, int sizeOfArray, int NumberOfValuesPerLine)
+{
+    int cnt = 0;
+    std::vector<Triangle*> triangles;
+
+    while(cnt<sizeOfArray)
+    {
+        triangles.push_back(new Triangle(vertices[cnt], vertices[cnt + 1], vertices[cnt + 2]));
+        cnt+=NumberOfValuesPerLine;
+    }
+}
+
 int main()
 {
     // glfw: initialize and configure
