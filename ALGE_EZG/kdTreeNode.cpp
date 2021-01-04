@@ -89,19 +89,21 @@ std::vector<Triangle*> kdTreeNode::SortTriangles(std::vector<Triangle*> triangle
     switch (axis)
     {
     case Axis::x:
-        std::sort(triangles.begin(), triangles.end(), [](const Triangle& t1, const Triangle& t2) {
-            return t1.center.x < t2.center.x;
+        std::sort(triangles.begin(), triangles.end(), [](const Triangle* t1, const Triangle* t2) {
+            return t1->center.x < t2->center.x;
             });
         break;
     case Axis::y:
-        std::sort(triangles.begin(), triangles.end(), [](const Triangle& t1, const Triangle& t2) {
-            return t1.center.y < t2.center.y;
+        std::sort(triangles.begin(), triangles.end(), [](const Triangle* t1, const Triangle* t2) {
+            return t1->center.y < t2->center.y;
             });
         break;
     case Axis::z:
-        std::sort(triangles.begin(), triangles.end(), [](const Triangle& t1, const Triangle& t2) {
-            return t1.center.z < t2.center.z;
+        std::sort(triangles.begin(), triangles.end(), [](const Triangle* t1, const Triangle* t2) {
+            return t1->center.z < t2->center.z;
             });
         break;
     }
+
+    return triangles;
 }
