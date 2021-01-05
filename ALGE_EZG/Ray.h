@@ -23,7 +23,7 @@ public:
 	Ray(glm::vec3 origin, glm::vec3 direction);
 	~Ray() = default;
 	bool tfhBoundingBox(glm::vec3 minimalBB, glm::vec3 maximalBB);
-	short int tfhTriangle(Triangle triangle);
+	short int tfhTriangle(Triangle triangle, float& tReturn);
 
 private:
 	//Ray

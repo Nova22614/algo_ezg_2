@@ -93,7 +93,7 @@ bool Ray::tfhBoundingBox(glm::vec3 minimalBB, glm::vec3 maximalBB)
 	return true;
 }
 
-short int Ray::tfhTriangle(Triangle triangle)
+short int Ray::tfhTriangle(Triangle triangle, float &tReturn)
 {
 	double eps = 10E-8;
 
@@ -133,6 +133,7 @@ short int Ray::tfhTriangle(Triangle triangle)
 	}
 
 	float t = f * dotProduct(edge2, q);
+	tReturn = t;
 
 	if (t > eps)
 	{
@@ -142,9 +143,6 @@ short int Ray::tfhTriangle(Triangle triangle)
 	{
 		return false;
 	}
-
-
-	return 0;
 }
 
 glm::vec3 Ray::crossProduct(const glm::vec3& vector1, const glm::vec3& vector2)

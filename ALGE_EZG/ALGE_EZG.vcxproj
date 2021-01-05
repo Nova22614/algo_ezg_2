@@ -154,7 +154,6 @@
     <ClCompile Include="ALGE_EZG.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="kdTreeNode.cpp" />
-    <ClCompile Include="kdTree_Helper.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Triangle.cpp" />
@@ -162,7 +161,6 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="kdTreeNode.h" />
-    <ClInclude Include="kdTree_Helper.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="shader_m.h" />
     <ClInclude Include="stb_image.h" />
