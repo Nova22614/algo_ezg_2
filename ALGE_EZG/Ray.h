@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include "Triangle.h"
+
 #define DIMENSIONS 3
 #define RIGHT 0
 #define LEFT 1
@@ -21,6 +23,7 @@ public:
 	Ray(glm::vec3 origin, glm::vec3 direction);
 	~Ray() = default;
 	bool tfhBoundingBox(glm::vec3 minimalBB, glm::vec3 maximalBB);
+	short int tfhTriangle(Triangle triangle);
 
 private:
 	//Ray
@@ -28,5 +31,8 @@ private:
 
 	//Hit Point
 	float coordinates[DIMENSIONS];
+
+	glm::vec3 crossProduct(const glm::vec3& vector1, const glm::vec3& vector2);
+	float dotProduct(const glm::vec3& vector1, const glm::vec3& vector2);
 };
 

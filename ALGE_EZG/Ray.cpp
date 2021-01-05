@@ -92,3 +92,71 @@ bool Ray::tfhBoundingBox(glm::vec3 minimalBB, glm::vec3 maximalBB)
 
 	return true;
 }
+
+short int Ray::tfhTriangle(Triangle triangle)
+{
+	double eps = 10E-8;
+
+	glm::vec3 pointA = triangle.points[0];
+	glm::vec3 pointB = triangle.points[1];
+	glm::vec3 pointC = triangle.points[2];
+
+	glm::vec3 edge1 = pointB - pointA;
+	glm::vec3 edge2 = pointC - pointA;
+
+	glm::vec3 directionVector = glm::vec3(direction[0], direction[1], direction[2]);
+	glm::vec3 originVector = glm::vec3(origin[0], origin[1], origin[2]);
+
+	glm::vec3 h = crossProduct(directionVector, edge2);
+	float a = dotProduct(edge1, h);
+
+	if (a > -eps && a < eps)
+	{
+		return false;
+	}
+
+	float f = 1.0 / a;
+	glm::vec3 s = originVector - pointA;
+	float u = f * dotProduct(s, h);
+
+	if (u < 0.0f || u > 1.0f)
+	{
+		return false;
+	}
+
+	glm::vec3 q = crossProduct(s, edge1);
+	float v = f * dotProduct(directionVector, q);
+
+	if (v < 0.0f || u + v > 1.0f)
+	{
+		return false;
+	}
+
+	float t = f * dotProduct(edge2, q);
+
+	if (t > eps)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+
+	return 0;
+}
+
+glm::vec3 Ray::crossProduct(const glm::vec3& vector1, const glm::vec3& vector2)
+{
+	return glm::vec3(
+		vector1[1] * vector2[2] - vector1[2] * vector2[1],
+		vector1[2] * vector2[0] - vector1[0] * vector2[2],
+		vector1[0] * vector2[1] - vector1[1] * vector2[0]
+	);
+}
+
+float Ray::dotProduct(const glm::vec3& vector1, const glm::vec3& vector2)
+{
+	return ((vector1[0] * vector2[0]) + (vector1[1] * vector2[1]) + (vector1[2] * vector2[2]));
+}
