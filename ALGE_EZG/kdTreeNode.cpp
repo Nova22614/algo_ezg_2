@@ -104,6 +104,37 @@ void kdTreeNode::drawRecursively(void)
     }
 }
 
+std::pair<Triangle*, float> kdTreeNode::checkForCollisionRecursively(Ray r)
+{
+    if (r.tfhBoundingBox(AABBmin, AABBmax))
+    {
+        if (LeafObject != nullptr)
+        {
+            std::pair<Triangle*, float> temp(LeafObject, -1);
+            r.tfhTriangle(*LeafObject, temp.second);
+            return temp;
+        }
+        else
+        {
+            std::pair<Triangle*, float> templ = left->checkForCollisionRecursively(r);
+            std::pair<Triangle*, float> tempr = right->checkForCollisionRecursively(r);
+
+            if (tempr.second >= 0 && tempr.second < templ.second)
+            {
+                return tempr;
+            }
+            else
+            {
+                return templ;
+            }
+        }
+    }
+    else
+    {
+        return std::pair<Triangle*, float>(nullptr, -1);
+    }
+}
+
 void kdTreeNode::MergeAABB(void)
 {
 	AABBmax.x = std::fmaxf(left->AABBmax.x, right->AABBmax.x);

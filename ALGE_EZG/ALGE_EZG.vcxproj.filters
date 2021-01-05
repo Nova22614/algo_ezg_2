@@ -30,6 +30,9 @@
     <ClCompile Include="Triangle.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="kdTreeNode.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -48,7 +51,7 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
-      <Filter>Quelldateien</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="kdTreeNode.h">
       <Filter>Headerdateien</Filter>

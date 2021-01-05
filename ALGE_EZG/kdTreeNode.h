@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Triangle.h"
+#include "Ray.h"
 
 int MAXPERLEAF = 1; //Maximum number of objects in a leaf node
 
@@ -24,6 +25,7 @@ class kdTreeNode
 		~kdTreeNode();
 
 		void drawRecursively(void);
+		std::pair<Triangle*, float> checkForCollisionRecursively(Ray r);
 
 		enum Axis
 		{
