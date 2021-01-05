@@ -11,10 +11,10 @@ Ray::Ray(glm::vec3 origin, glm::vec3 direction)
 	this->direction[2] = direction.z;
 }
 
-bool Ray::tfhBoundingBox(glm::vec3 minimalBB, glm::vec3 maximalBB)
+bool Ray::tfhBoundingBox(glm::vec3 minBB, glm::vec3 maxBB)
 {
-	float minimalBB[DIMENSIONS] = { minimalBB.x, minimalBB.y, minimalBB.z };
-	float maximalBB[DIMENSIONS] = { maximalBB.x, maximalBB.y, maximalBB.z };
+	float minimalBB[DIMENSIONS] = { minBB.x, minBB.y, minBB.z };
+	float maximalBB[DIMENSIONS] = { maxBB.x, maxBB.y, maxBB.z };
 	bool inside = true;
 	int quadrant[DIMENSIONS];
 	int plane;

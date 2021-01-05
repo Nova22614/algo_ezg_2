@@ -2,7 +2,7 @@
 
 kdTreeNode::kdTreeNode(std::vector<Triangle*> Triangles)
 {
-    if (Triangles.size() <= MAXPERLEAF)
+    if(Triangles.size() <= MAXPERLEAF)
     {        
         //TODO: implement possibility for multiple triangles per leaf
         //save current triangle
@@ -37,7 +37,6 @@ kdTreeNode::~kdTreeNode()
 {
     delete right;
     delete left;
-    delete LeafObject;
 }
 
 void kdTreeNode::drawRecursively(void)

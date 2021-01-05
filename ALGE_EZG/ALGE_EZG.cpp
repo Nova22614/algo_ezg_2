@@ -20,6 +20,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -36,6 +37,11 @@ float lastX = (float)SCR_WIDTH / 2.0;
 float lastY = (float)SCR_HEIGHT / 2.0;
 float yaw;
 float pitch;
+
+
+bool showGrid = false;
+
+Triangle* TriangleToRender=nullptr;
 
 
 std::vector<Triangle*> GetTriangleFromVertexList(float* vertices, int sizeOfArray, int NumberOfValuesPerLine, glm::vec3 Translation = glm::vec3(0.0f,0.0f,0.0f), float RotationAngle = 0.0f, glm::vec3 RotationVector = glm::vec3(0.0f,0.0f,0.0f), glm::vec3 Scale = glm::vec3(1.0f,1.0f,1.0f))
@@ -103,6 +109,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -323,18 +330,28 @@ int main()
         glm::mat4 view = glm::lookAt(camera.Position, camera.Position + camera.Front, camera.Up);
         ourShader.setMat4("view", view);
 
-        // render boxes
+       
         
         glm::mat4 model;
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture3);
-        model = glm::mat4(1.0f);
-        ourShader.setMat4("model", model);
-        Triangles[77]->Draw();
+        //RENDER TRIANGLE
+        if (TriangleToRender != nullptr)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture3);
+            model = glm::mat4(1.0f);
+            ourShader.setMat4("model", model);
+            TriangleToRender->Draw();
+        }
 
-        Tree.drawRecursively();
 
+        //RENDER GRID
+        if (showGrid)
+        {
+            Tree.drawRecursively();
+        }
+
+        //RENDER SCENE
         for (unsigned int i = 0; i < 10; i++)
         {
             glActiveTexture(GL_TEXTURE0);
@@ -367,6 +384,7 @@ int main()
     {
         delete triangle;
     }
+    Triangles.clear();
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
@@ -390,6 +408,20 @@ void processInput(GLFWwindow* window)
         camera.Position -= glm::normalize(glm::cross(camera.Front, camera.Up)) * cameraSpeed;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.Position += glm::normalize(glm::cross(camera.Front, camera.Up)) * cameraSpeed;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_E && action == GLFW_PRESS)
+    {
+        showGrid = !showGrid;
+    }
+
+    if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    {
+        //TODO: shoot ray and get triangle
+        TriangleToRender = nullptr;
+    }
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
