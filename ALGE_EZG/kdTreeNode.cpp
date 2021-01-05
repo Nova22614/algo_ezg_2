@@ -126,7 +126,7 @@ std::pair<Triangle*, float> kdTreeNode::checkForCollisionRecursively(Ray r)
             std::pair<Triangle*, float> templ = left->checkForCollisionRecursively(r);
             std::pair<Triangle*, float> tempr = right->checkForCollisionRecursively(r);
 
-            if (tempr.second >= 0 && tempr.second < templ.second)
+            if (tempr.second >= 0 && (templ.second < 0 || tempr.second < templ.second))
             {
                 return tempr;
             }
