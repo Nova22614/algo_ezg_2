@@ -38,6 +38,7 @@ float lastY = (float)SCR_HEIGHT / 2.0;
 float yaw;
 float pitch;
 
+kdTreeNode* Tree;
 
 bool showGrid = false;
 
@@ -298,7 +299,7 @@ int main()
         Triangles.insert(Triangles.end(), TempTriangles.begin(), TempTriangles.end());
     }
 
-    kdTreeNode Tree = kdTreeNode(Triangles);
+    Tree = new kdTreeNode(Triangles);
 
 
     // render loop
@@ -348,7 +349,9 @@ int main()
         //RENDER GRID
         if (showGrid)
         {
-            Tree.drawRecursively();
+            model = glm::mat4(1.0f);
+            ourShader.setMat4("model", model);
+            Tree->drawRecursively();
         }
 
         //RENDER SCENE
@@ -386,6 +389,8 @@ int main()
     }
     Triangles.clear();
 
+    delete Tree;
+
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
@@ -419,8 +424,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     if (key == GLFW_KEY_F && action == GLFW_PRESS)
     {
-        //TODO: shoot ray and get triangle
-        TriangleToRender = nullptr;
+        Ray ray = Ray(camera.Position, camera.Front);
+        auto hittedObject = Tree->checkForCollisionRecursively(ray);
+        if (hittedObject.second >= 0)
+        {
+            TriangleToRender = hittedObject.first;
+        }
+        else
+        {
+            TriangleToRender = nullptr;
+        }
     }
 }
 

@@ -25,6 +25,7 @@ class kdTreeNode
 		unsigned int VBO = 0;
 
 		kdTreeNode(std::vector<Triangle*> Triangles);
+		kdTreeNode() {}
 		~kdTreeNode();
 
 		void drawRecursively(void);
