@@ -24,8 +24,12 @@ public:
 	~Ray() = default;
 	bool tfhBoundingBox(glm::vec3 minimalBB, glm::vec3 maximalBB);
 	short int tfhTriangle(Triangle triangle, float& tReturn);
+	void Draw();
 
 private:
+	unsigned int VAO = 0;
+	unsigned int VBO = 0;
+
 	//Ray
 	float origin[DIMENSIONS], direction[DIMENSIONS];
 

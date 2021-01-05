@@ -145,6 +145,31 @@ short int Ray::tfhTriangle(Triangle triangle, float &tReturn)
 	}
 }
 
+void Ray::Draw()
+{
+	// Make line
+	float vertices[] = {
+		origin[0], origin[1], origin[2],
+		direction[0]*100, direction[1]*100, direction[2]*100
+	};
+
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(VAO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_LINES, 0, 2);
+	glBindVertexArray(0);
+}
+
 glm::vec3 Ray::crossProduct(const glm::vec3& vector1, const glm::vec3& vector2)
 {
 	return glm::vec3(

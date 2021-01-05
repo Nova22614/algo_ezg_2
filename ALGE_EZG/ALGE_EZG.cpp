@@ -39,6 +39,7 @@ float yaw;
 float pitch;
 
 kdTreeNode* Tree;
+Ray* RayToRender;
 
 bool showGrid = false;
 
@@ -354,6 +355,16 @@ int main()
             Tree->drawRecursively();
         }
 
+        //RENDER RAY
+        if (RayToRender != nullptr)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture3);
+            model = glm::mat4(1.0f);
+            ourShader.setMat4("model", model);
+            RayToRender->Draw();
+        }
+
         //RENDER SCENE
         for (unsigned int i = 0; i < 10; i++)
         {
@@ -425,6 +436,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_F && action == GLFW_PRESS)
     {
         Ray ray = Ray(camera.Position, camera.Front);
+        RayToRender = new Ray(camera.Position, glm::vec3(camera.Front.x * 100, camera.Front.y * 100, camera.Front.z * 100));
         auto hittedObject = Tree->checkForCollisionRecursively(ray);
         if (hittedObject.second >= 0)
         {
