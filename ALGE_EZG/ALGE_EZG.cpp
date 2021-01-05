@@ -15,6 +15,7 @@
 #include "Triangle.h"
 
 #include "Ray.h"
+#include "kdTreeNode.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -290,7 +291,7 @@ int main()
         Triangles.insert(Triangles.end(), TempTriangles.begin(), TempTriangles.end());
     }
 
-
+    kdTreeNode Tree = kdTreeNode(Triangles);
 
 
     // render loop
@@ -332,6 +333,8 @@ int main()
         ourShader.setMat4("model", model);
         Triangles[77]->Draw();
 
+        Tree.drawRecursively();
+
         for (unsigned int i = 0; i < 10; i++)
         {
             glActiveTexture(GL_TEXTURE0);
@@ -359,6 +362,11 @@ int main()
     // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+
+    for (Triangle* triangle : Triangles)
+    {
+        delete triangle;
+    }
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
