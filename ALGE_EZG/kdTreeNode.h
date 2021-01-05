@@ -8,18 +8,21 @@
 #include "Triangle.h"
 #include "Ray.h"
 
-int MAXPERLEAF = 1; //Maximum number of objects in a leaf node
+#define MAXPERLEAF 1 //Maximum number of objects in a leaf node
 
 class kdTreeNode
 {
 	public:
-		kdTreeNode* left;
-		kdTreeNode* right;
+		kdTreeNode* left=nullptr;
+		kdTreeNode* right=nullptr;
 
 		glm::vec3 AABBmax;
 		glm::vec3 AABBmin;
 
-		Triangle* LeafObject;
+		Triangle* LeafObject=nullptr;
+
+		unsigned int VAO = 0;
+		unsigned int VBO = 0;
 
 		kdTreeNode(std::vector<Triangle*> Triangles);
 		~kdTreeNode();
