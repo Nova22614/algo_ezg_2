@@ -65,7 +65,7 @@ bool Ray::tfhBoundingBox(glm::vec3 minBB, glm::vec3 maxBB)
 	{
 		if (maximalTDistance[plane] < maximalTDistance[i])
 		{
-			plane = 1;
+			plane = i;
 		}
 	}
 
