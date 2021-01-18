@@ -26,12 +26,14 @@ public:
 	short int tfhTriangle(Triangle triangle, float& tReturn);
 	void Draw();
 
+	//Ray
+	float origin[DIMENSIONS], direction[DIMENSIONS];
+
 private:
 	unsigned int VAO = 0;
 	unsigned int VBO = 0;
 
-	//Ray
-	float origin[DIMENSIONS], direction[DIMENSIONS];
+	
 
 	//Hit Point
 	float coordinates[DIMENSIONS];

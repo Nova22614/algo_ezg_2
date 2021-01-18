@@ -437,7 +437,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     {
         Ray ray = Ray(camera.Position, camera.Front);
         RayToRender = new Ray(camera.Position, glm::vec3(camera.Front.x * 100, camera.Front.y * 100, camera.Front.z * 100));
-        auto hittedObject = Tree->checkForCollisionRecursively(ray);
+        auto hittedObject = Tree->checkBVHForCollisionRecursively(ray);
         if (hittedObject.second >= 0)
         {
             TriangleToRender = hittedObject.first;

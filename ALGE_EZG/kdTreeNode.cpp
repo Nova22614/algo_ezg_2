@@ -1,16 +1,124 @@
-#include "kdTreeNode.h"
+﻿#include "kdTreeNode.h"
 
-kdTreeNode::kdTreeNode(std::vector<Triangle*> Triangles)
+//kdTreeNode::kdTreeNode(std::vector<Triangle*> Triangles)
+//{
+//    if(Triangles.size() <= MAXPERLEAF)
+//    {        
+//        //TODO: implement possibility for multiple triangles per leaf
+//        //save current triangle
+//        LeafObject = Triangles.front();
+//
+//        //set correct AABB
+//        AABBmax = LeafObject->CalcAABBmax();
+//        AABBmin = LeafObject->CalcAABBmin();
+//
+//        //jump back
+//        return;
+//    }
+//    else
+//    {
+//        //find longest axis
+//        Axis splittingAxis = GetCuttingAxis(Triangles);
+//
+//        //sort triangles centers on found axis
+//        Triangles = SortTriangles(Triangles, splittingAxis);
+//
+//        //split triangles in two lists and create child nodes to handle them
+//        std::size_t const half_size = Triangles.size() / 2;
+//        left = new kdTreeNode(std::vector<Triangle*>(Triangles.begin(), Triangles.begin() + half_size));
+//        right = new kdTreeNode(std::vector<Triangle*>(Triangles.begin() + half_size, Triangles.end()));
+//
+//        //set correct AABB
+//        MergeAABB();
+//    }
+//}
+
+kdTreeNode::~kdTreeNode()
 {
-    if(Triangles.size() <= MAXPERLEAF)
-    {        
-        //TODO: implement possibility for multiple triangles per leaf
+    delete right;
+    delete left;
+}
+
+void kdTreeNode::buildKDT(std::vector<Triangle*> Triangles)
+{
+    if (Triangles.size() <= MAXPERLEAF)
+    {
+        //save current triangles
+        LeafObjects = Triangles;
+
+        //jump back
+        return;
+    }
+    else
+    {
+        //find longest axis
+        separationAxis = GetCuttingAxis(Triangles);
+
+        //sort triangles centers on found axis
+        Triangles = SortTriangles(Triangles, separationAxis);
+        if (Triangles.size() % 2 == 0)
+        {
+            separationValue = (Triangles[((int)Triangles.size() / 2) - 1]->center[separationAxis] + Triangles[((int)Triangles.size() / 2)]->center[separationAxis])/2;
+        }
+        else
+        {
+            separationValue = Triangles[((int)Triangles.size() / 2)]->center[separationAxis];
+        }
+
+        std::vector<Triangle*> leftList, rightList;
+        glm::vec3 tempMax = AABBmax;
+        tempMax[separationAxis] = separationValue;
+        glm::vec3 tempMin = AABBmin;
+        tempMin[separationAxis] = separationValue;
+
+        left = new kdTreeNode(AABBmin, tempMax);
+        right = new kdTreeNode(tempMin, AABBmax);
+
+        //split triangles in two lists and create child nodes to handle them
+        for (int i = 0; i < Triangles.size(); i++)
+        {
+            if (Triangles[i]->triBoxOverlap(left->AABBcenter, left->AABBhalfLength))
+            {
+                leftList.push_back(Triangles[i]);
+            }
+            if (Triangles[i]->triBoxOverlap(right->AABBcenter, right->AABBhalfLength))
+            {
+                rightList.push_back(Triangles[i]);
+            }
+        }
+
+        left->buildKDT(leftList);
+        left->buildKDT(rightList);
+    }
+}
+
+void kdTreeNode::buildBVH(std::vector<Triangle*> Triangles)
+{
+    if (Triangles.size() <= MAXPERLEAF)
+    {
+        
         //save current triangle
-        LeafObject = Triangles.front();
+        //LeafObject = Triangles.front();
+        LeafObjects = Triangles;
 
         //set correct AABB
-        AABBmax = LeafObject->CalcAABBmax();
-        AABBmin = LeafObject->CalcAABBmin();
+        AABBmax = LeafObjects.front()->CalcAABBmax();
+        AABBmin = LeafObjects.front()->CalcAABBmin();
+
+        for (int i = 1; i < LeafObjects.size(); i++)
+        {
+            glm::vec3 temp = LeafObjects[i]->CalcAABBmax();
+
+            AABBmax.x = std::fmaxf(AABBmax.x, right->AABBmax.x);
+            AABBmax.y = std::fmaxf(AABBmax.y, right->AABBmax.y);
+            AABBmax.z = std::fmaxf(AABBmax.z, right->AABBmax.z);
+
+            temp = LeafObjects[i]->CalcAABBmin();
+
+            AABBmin.x = std::fminf(AABBmin.x, right->AABBmin.x);
+            AABBmin.y = std::fminf(AABBmin.y, right->AABBmin.y);
+            AABBmin.z = std::fminf(AABBmin.z, right->AABBmin.z);
+        }
 
         //jump back
         return;
@@ -25,18 +133,15 @@ kdTreeNode::kdTreeNode(std::vector<Triangle*> Triangles)
 
         //split triangles in two lists and create child nodes to handle them
         std::size_t const half_size = Triangles.size() / 2;
-        left = new kdTreeNode(std::vector<Triangle*>(Triangles.begin(), Triangles.begin() + half_size));
-        right = new kdTreeNode(std::vector<Triangle*>(Triangles.begin() + half_size, Triangles.end()));
+        left = new kdTreeNode();
+        right = new kdTreeNode();
+
+        left->buildBVH(std::vector<Triangle*>(Triangles.begin(), Triangles.begin() + half_size));
+        right->buildBVH(std::vector<Triangle*>(Triangles.begin() + half_size, Triangles.end()));
 
         //set correct AABB
         MergeAABB();
     }
-}
-
-kdTreeNode::~kdTreeNode()
-{
-    delete right;
-    delete left;
 }
 
 void kdTreeNode::drawRecursively(void)
@@ -111,20 +216,32 @@ void kdTreeNode::drawRecursively(void)
     }
 }
 
-std::pair<Triangle*, float> kdTreeNode::checkForCollisionRecursively(Ray r)
+std::pair<Triangle*, float> kdTreeNode::checkBVHForCollisionRecursively(Ray r)
 {
     if (r.tfhBoundingBox(AABBmin, AABBmax))
     {
-        if (LeafObject != nullptr)
+        if (LeafObjects.size() > 0)
         {
-            std::pair<Triangle*, float> temp(LeafObject, -1);
-            r.tfhTriangle(*LeafObject, temp.second);
-            return temp;
+            std::pair<Triangle*, float> bestTemp(LeafObjects[0], -1);
+            r.tfhTriangle(*LeafObjects[0], bestTemp.second);
+
+            for (int i = 1; i < LeafObjects.size(); i++)
+            {
+                std::pair<Triangle*, float> temp(LeafObjects[i], -1);
+                r.tfhTriangle(*LeafObjects[i], temp.second);
+
+                if (temp.second >= 0 && (bestTemp.second < 0 || temp.second < bestTemp.second))
+                {
+                    bestTemp = temp;
+                }
+            }
+
+            return bestTemp;
         }
         else
         {
-            std::pair<Triangle*, float> templ = left->checkForCollisionRecursively(r);
-            std::pair<Triangle*, float> tempr = right->checkForCollisionRecursively(r);
+            std::pair<Triangle*, float> templ = left->checkBVHForCollisionRecursively(r);
+            std::pair<Triangle*, float> tempr = right->checkBVHForCollisionRecursively(r);
 
             if (tempr.second >= 0 && (templ.second < 0 || tempr.second < templ.second))
             {
@@ -142,6 +259,69 @@ std::pair<Triangle*, float> kdTreeNode::checkForCollisionRecursively(Ray r)
     }
 }
 
+std::pair<Triangle*, float> kdTreeNode::checkKDTForCollisionRecursively(Ray r)
+{
+    if (LeafObjects.size() > 0)
+    {
+        std::pair<Triangle*, float> bestTemp(LeafObjects[0], -1);
+        r.tfhTriangle(*LeafObjects[0], bestTemp.second);
+
+        for (int i = 1; i < LeafObjects.size(); i++)
+        {
+            std::pair<Triangle*, float> temp(LeafObjects[i], -1);
+            r.tfhTriangle(*LeafObjects[i], temp.second);
+
+            if (temp.second >= 0 && (bestTemp.second < 0 || temp.second < bestTemp.second))
+            {
+                bestTemp = temp;
+            }
+        }
+
+        return bestTemp;
+    }
+    else
+    {
+        // Find t value for intersection between segment and split plane
+        float t = (separationValue - r.origin[separationAxis]) / r.direction[separationAxis];
+        int first = r.origin[separationAxis] > separationAxis;
+        // Test if line segment straddles splitting plane
+        if (0.0f <= t) 
+        {
+            // Yes, traverse near side first, then far side
+            if (first)
+            { 
+                std::pair<Triangle*, float> temp = right->checkKDTForCollisionRecursively(r);
+                if (temp.second >= 0)
+                {
+                    return temp;
+                }
+                return left->checkKDTForCollisionRecursively(r);
+            }
+            else
+            {
+                std::pair<Triangle*, float> temp = left->checkKDTForCollisionRecursively(r);
+                if (temp.second >= 0)
+                {
+                    return temp;
+                }
+                return right->checkKDTForCollisionRecursively(r);
+            }
+        }
+        else 
+        {
+            // No, so just traverse near side
+            if (first)
+            {
+                return right->checkKDTForCollisionRecursively(r);
+            }
+            else
+            {
+                return left->checkKDTForCollisionRecursively(r);
+            }
+        }
+    }
+}
+
 void kdTreeNode::MergeAABB(void)
 {
 	AABBmax.x = std::fmaxf(left->AABBmax.x, right->AABBmax.x);
@@ -151,6 +331,12 @@ void kdTreeNode::MergeAABB(void)
 	AABBmin.x = std::fminf(left->AABBmin.x, right->AABBmin.x);
 	AABBmin.y = std::fminf(left->AABBmin.y, right->AABBmin.y);
 	AABBmin.z = std::fminf(left->AABBmin.z, right->AABBmin.z);
+}
+
+void kdTreeNode::CornerAABBtoCenterAABB(void)
+{
+    AABBcenter = AABBmin + (AABBmin + AABBmax) / 2.0f;
+    AABBhalfLength = AABBmax - AABBcenter;
 }
 
 kdTreeNode::Axis kdTreeNode::GetCuttingAxis(std::vector<Triangle*> Triangles)
