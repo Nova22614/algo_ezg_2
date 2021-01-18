@@ -8,7 +8,7 @@
 #include "Triangle.h"
 #include "Ray.h"
 
-#define MAXPERLEAF 12 //Maximum number of objects in a leaf node
+#define MAXPERLEAF 6 //Maximum number of objects in a leaf node
 
 class kdTreeNode
 {

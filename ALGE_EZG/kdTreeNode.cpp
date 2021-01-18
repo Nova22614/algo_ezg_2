@@ -88,7 +88,7 @@ void kdTreeNode::buildKDT(std::vector<Triangle*> Triangles)
         }
 
         left->buildKDT(leftList);
-        left->buildKDT(rightList);
+        right->buildKDT(rightList);
     }
 }
 
@@ -335,7 +335,7 @@ void kdTreeNode::MergeAABB(void)
 
 void kdTreeNode::CornerAABBtoCenterAABB(void)
 {
-    AABBcenter = AABBmin + (AABBmin + AABBmax) / 2.0f;
+    AABBcenter = AABBmin + (AABBmax - AABBmin) / 2.0f;
     AABBhalfLength = AABBmax - AABBcenter;
 }
 

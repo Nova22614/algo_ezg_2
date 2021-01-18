@@ -294,7 +294,7 @@ int main()
     //KD-Tree
     std::vector<Triangle*> Triangles;
 
-    for (unsigned int i = 0; i < 10; i++)
+    for (unsigned int i = 0; i < 1; i++)
     {
         std::vector<Triangle*> TempTriangles = GetTriangleFromVertexList(vertices, 180, 5, cubePositions[i]);
         Triangles.insert(Triangles.end(), TempTriangles.begin(), TempTriangles.end());
@@ -396,7 +396,7 @@ int main()
         }
 
         //RENDER SCENE
-        for (unsigned int i = 0; i < 10; i++)
+        for (unsigned int i = 0; i < 0; i++)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture1);
