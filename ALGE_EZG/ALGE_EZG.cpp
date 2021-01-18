@@ -300,8 +300,37 @@ int main()
         Triangles.insert(Triangles.end(), TempTriangles.begin(), TempTriangles.end());
     }
 
-    Tree = new kdTreeNode();
-    Tree->buildBVH(Triangles);
+    glm::vec3 min(INT16_MAX, INT16_MAX, INT16_MAX);
+    glm::vec3 max(INT16_MIN, INT16_MIN, INT16_MIN);
+    for (auto Triangle : Triangles)
+    {
+        if (Triangle->center.x < min.x)
+        {
+            min.x = Triangle->center.x;
+        }
+        if (Triangle->center.y < min.y)
+        {
+            min.y = Triangle->center.y;
+        }
+        if (Triangle->center.z < min.z)
+        {
+            min.z = Triangle->center.z;
+        }
+        if (Triangle->center.x > max.x)
+        {
+            max.x = Triangle->center.x;
+        }
+        if (Triangle->center.y > max.y)
+        {
+            max.y = Triangle->center.y;
+        }
+        if (Triangle->center.z > max.z)
+        {
+            max.z = Triangle->center.z;
+        }
+    }
+    Tree = new kdTreeNode(min, max);
+    Tree->buildKDT(Triangles);
 
 
     // render loop
@@ -438,7 +467,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     {
         Ray ray = Ray(camera.Position, camera.Front);
         RayToRender = new Ray(camera.Position, glm::vec3(camera.Front.x * 100, camera.Front.y * 100, camera.Front.z * 100));
-        auto hittedObject = Tree->checkBVHForCollisionRecursively(ray);
+        auto hittedObject = Tree->checkKDTForCollisionRecursively(ray);
         if (hittedObject.second >= 0)
         {
             TriangleToRender = hittedObject.first;
