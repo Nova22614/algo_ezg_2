@@ -300,7 +300,8 @@ int main()
         Triangles.insert(Triangles.end(), TempTriangles.begin(), TempTriangles.end());
     }
 
-    Tree = new kdTreeNode(Triangles);
+    Tree = new kdTreeNode();
+    Tree->buildBVH(Triangles);
 
 
     // render loop
